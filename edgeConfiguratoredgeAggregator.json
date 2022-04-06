@@ -8,7 +8,7 @@
     "servers": [
         {
             "url": "{protocol}://{environment}:{port}",
-            "description": "edgeConfigurator edgeAgregator",
+            "description": "edgeConfiguratoredgeAggregator",
             "variables": {
                 "protocol": {
                     "default": "http",
@@ -4037,7 +4037,7 @@
                 "tags": [
                     "Licensing"
                 ],
-                "description": "Get information about the installed licenses (features).",
+                "description": "Get information about the installed licenses (features). The system should be in running mode.",
                 "responses": {
                     "200": {
                         "description": "OK success.",
@@ -4062,12 +4062,52 @@
                 ]
             }
         },
+        "/connectors/{edgeConnector_ID}/runtime/core/license/details": {
+            "get": {
+                "tags": [
+                    "Licensing"
+                ],
+                "description": "Retrieve the license details. The system should be in running mode.",
+                "responses": {
+                    "200": {
+                        "description": "OK success.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/coreLicenseDetails"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResponseOthers"
+                                }
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "edgeConnector_ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
         "/connectors/{edgeConnector_ID}/runtime/core/license/floatingserver": {
             "get": {
                 "tags": [
                     "Licensing"
                 ],
-                "description": "Retrieve the configured floating license servers (up to 3).",
+                "description": "Retrieve the configured floating license servers (up to 3). The system should be in running mode.",
                 "responses": {
                     "200": {
                         "description": "OK success.",
@@ -4105,109 +4145,12 @@
                 "tags": [
                     "Licensing"
                 ],
-                "description": "Configured floating license servers (up to 3).",
+                "description": "Configured floating license servers (up to 3). The system should be in running mode.",
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/coreFloatingServerToConfigure"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "OK success.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ResponseOthers"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ResponseOthers"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ResponseOthers"
-                                }
-                            }
-                        }
-                    }
-                },
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "edgeConnector_ID",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ]
-            }
-        },
-        "/connectors/{edgeConnector_ID}/runtime/core/license/datapoints": {
-            "get": {
-                "tags": [
-                    "Licensing"
-                ],
-                "description": "Get the number of preallocated datapoint licenses.",
-                "responses": {
-                    "200": {
-                        "description": "OK success.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/coreDataPointsToRetrieve"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ResponseOthers"
-                                }
-                            }
-                        }
-                    }
-                },
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "edgeConnector_ID",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ]
-            },
-            "post": {
-                "tags": [
-                    "Licensing"
-                ],
-                "description": "Set the number of preallocated datapaoint licenses.",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/coreDataPointsToSet"
                             }
                         }
                     }
@@ -13404,8 +13347,6 @@
                 "required": [
                     "availableslots",
                     "feature",
-                    "serverslotsinuse",
-                    "serverslotstotal",
                     "totalslots"
                 ],
                 "items": {
@@ -13416,15 +13357,27 @@
                         "feature": {
                             "type": "string"
                         },
-                        "serverslotsinuse": {
-                            "type": "integer"
-                        },
-                        "serverslotstotal": {
-                            "type": "integer"
-                        },
                         "totalslots": {
                             "type": "integer"
                         }
+                    }
+                }
+            },
+            "coreLicenseDetails": {
+                "type": "object",
+                "required": [
+                    "data",
+                    "type"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "type": "object"
+                        }
+                    },
+                    "type": {
+                        "type": "string"
                     }
                 }
             },
@@ -13460,31 +13413,6 @@
                 "allOf": [
                     {
                         "$ref": "#/components/schemas/coreFloatingServerModel"
-                    }
-                ]
-            },
-            "coreDataPointsModel": {
-                "type": "object",
-                "required": [
-                    "reserve"
-                ],
-                "properties": {
-                    "reserve": {
-                        "type": "integer"
-                    }
-                }
-            },
-            "coreDataPointsToRetrieve": {
-                "allOf": [
-                    {
-                        "$ref": "#/components/schemas/coreDataPointsModel"
-                    }
-                ]
-            },
-            "coreDataPointsToSet": {
-                "allOf": [
-                    {
-                        "$ref": "#/components/schemas/coreDataPointsModel"
                     }
                 ]
             },
