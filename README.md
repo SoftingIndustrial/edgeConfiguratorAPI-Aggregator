@@ -5,4 +5,4 @@ edge-configurator-edgeaggregator documentation repository. Shall be mirrored to 
 Ensure that any credentials or sensitive information shall be omitted.
 
 # render API
-The Swagger API documentation can be found [here](https://softingindustrial.github.io/edgeConfiguratorAPI-edgeAggregator/)
+The Swagger API documentation can be found [here](https://softingindustrial.github.io/edgeConfiguratorAPI-Aggregator/)
